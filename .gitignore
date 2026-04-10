@@ -1,0 +1,15 @@
+# User-tier config (not checked in)
+.claude/settings.local.json
+
+# Plans and task outputs (project-specific, not framework)
+plans/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*~
+*.swp
+*.swo
+
+# Node
+node_modules/
