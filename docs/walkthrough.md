@@ -7,16 +7,21 @@ A practical end-to-end walkthrough showing the complete development lifecycle. E
 ## 1. Install
 
 ```bash
-git clone https://github.com/ngentiq/ngentiq-claude-lite.git /tmp/ngentiq-claude-lite
+git clone https://github.com/Ngentiq/ngentiq-claude-lite.git /tmp/ngentiq-claude-lite
 bash /tmp/ngentiq-claude-lite/install.sh ~/my-project
 ```
 
 ```
-[install] Copying hook to .claude/sdlc/hooks/inject-rules.js
-[install] Copying rules to .claude/sdlc/rules/
-[install] Copying skills to .claude/skills/
-[install] Updating .claude/settings.json (hooks wired)
-[install] Done. Restart Claude Code, then run /setup.
+[1/4] Copying framework files...
+      .claude/sdlc/hooks/sdlc-hook.js
+      .claude/sdlc/rules/RULES.md
+      .claude/sdlc/rules/AGENT-RULES.md
+[2/4] Copying skills...
+[3/4] Configuring settings.json...
+[4/4] Setting up project customization...
+
+Installation Complete
+  Restart Claude Code, then run /setup.
 ```
 
 ## 2. Setup

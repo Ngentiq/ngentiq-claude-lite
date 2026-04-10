@@ -44,6 +44,7 @@ Available SDLC skills for this project:
 | `/review` | Code review against project conventions |
 | `/test <target>` | Generate tests for uncovered code |
 | `/explain <target>` | Layered code explanation: purpose, design, patterns |
+| `/commit` | Generate conventional commit message with approval flow |
 | `/pr` | Generate PR description from branch commits |
 
 ## Conventions

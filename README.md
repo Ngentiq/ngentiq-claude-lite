@@ -1,8 +1,10 @@
-# Claude Code SDLC Framework
+# ngentiq-claude-lite
+
+[![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 A lightweight, open-source SDLC framework for [Claude Code](https://claude.ai/code). One hook injects rules on every prompt to maintain consistent AI behavior -- delegation discipline, concise returns, truthfulness, and command safety. Nine skills cover the full development lifecycle from planning through PR creation.
 
-MIT licensed. No branding. No dependencies. No build step.
+MIT licensed. No dependencies. No build step.
 
 ## Why This Framework
 
@@ -11,8 +13,8 @@ CLAUDE.md instructions fade as your conversation grows -- Claude's context windo
 - **Rule persistence via hooks** -- Your delegation, safety, and quality rules survive context drift because they are injected fresh on every prompt, not just written once in CLAUDE.md.
 - **Delegation discipline** -- Forces all substantive work to Task agents, keeping the main context clean for coordination. No more 200-line code blocks in the coordinator thread.
 - **BAC/QAC traceability** -- Business and QA acceptance criteria are first-class from `/plan` through `/tasks`, `/implement`, and `/pr`. Nothing gets lost between planning and delivery.
-- **Expert-level defaults** -- All agent personas default to senior architect / principal engineer level. No junior-engineer hedging or filler.
-- **Zero config, zero dependencies** -- One plain JavaScript hook, no build step, no external tools beyond the Node.js that ships with Claude Code.
+- **Senior-level agent personas** -- All agent personas default to senior architect / principal engineer level, producing higher-quality output with less hedging.
+- **Single hook, no build step** -- One plain JavaScript file, no dependencies beyond the Node.js that ships with Claude Code.
 
 ## Quick Install
 
@@ -21,14 +23,14 @@ CLAUDE.md instructions fade as your conversation grows -- Claude's context windo
 ### Unix / macOS / WSL
 
 ```bash
-git clone https://github.com/ngentiq/ngentiq-claude-lite.git /tmp/ngentiq-claude-lite
+git clone https://github.com/Ngentiq/ngentiq-claude-lite.git /tmp/ngentiq-claude-lite
 bash /tmp/ngentiq-claude-lite/install.sh /path/to/your/project
 ```
 
 ### Windows PowerShell
 
 ```powershell
-git clone https://github.com/ngentiq/ngentiq-claude-lite.git $env:TEMP/ngentiq-claude-lite
+git clone https://github.com/Ngentiq/ngentiq-claude-lite.git $env:TEMP/ngentiq-claude-lite
 & $env:TEMP/ngentiq-claude-lite/install.ps1 -Target C:\path\to\your\project
 ```
 
@@ -56,14 +58,13 @@ This detects your tech stack, generates a project-specific `CLAUDE.md`, and veri
 
 ## How It Works
 
-The framework installs a single JavaScript hook that fires on every prompt (`UserPromptSubmit`) and every agent spawn (`SubagentStart`). The hook reads rule files and injects them as system context, ensuring Claude consistently:
+The framework installs a single JavaScript file (`.claude/sdlc/hooks/sdlc-hook.js`) registered in `.claude/settings.json` as a Claude Code hook. It fires on two events:
 
-- **Delegates** substantive work to Task agents (keeping the main context for coordination)
-- **Returns concisely** (agent outputs stay under 200 tokens; detailed content goes to files)
-- **Stays truthful** (no fabricated file contents, test results, or command output)
-- **Uses safe commands** (one command per Bash call, no compound operators)
+1. **`UserPromptSubmit`** -- On every prompt, the hook reads `.claude/sdlc/rules/RULES.md` (and `.claude/PROJECT-RULES.md` if present) and writes them to stdout. Claude Code captures this stdout as a `system-reminder`, making the rules visible in the model's context window.
 
-Rules are injected every prompt because Claude's context window causes earlier instructions to fade. The hook solves this by re-injecting critical rules on every interaction.
+2. **`SubagentStart`** -- When Claude spawns a Task agent, the hook reads `.claude/sdlc/rules/AGENT-RULES.md` and writes it to stdout. It also parses the agent's prompt for coordinator keywords (e.g., "orchestrate", "delegate") and appends coordinator-specific instructions when detected.
+
+Because the hook re-injects rules on every interaction, they remain active regardless of how long the conversation gets -- unlike CLAUDE.md instructions, which can drift out of working memory.
 
 ## Customization
 
@@ -79,6 +80,10 @@ Rules are injected every prompt because Claude's context window causes earlier i
 - [Skill Reference](docs/skills.md) -- Detailed documentation for each skill
 - [Customization Guide](docs/customization.md) -- How to extend and adapt the framework
 - [Example CLAUDE.md](examples/CLAUDE.md.example) -- Template for a Node.js/TypeScript project
+
+## Contributing
+
+Issues and pull requests are welcome. If you find a bug or have an idea for improvement, please [open an issue](https://github.com/Ngentiq/ngentiq-claude-lite/issues).
 
 ## License
 
