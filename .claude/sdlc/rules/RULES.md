@@ -12,6 +12,8 @@ These rules are injected on every prompt to maintain consistent, high-quality be
 >
 > **Correct pattern:** One command per Bash call. Use dedicated tools (Read, Edit, Write, Grep, Glob) instead of bash equivalents (cat, sed, echo, grep, find). To change directory and run a command, use two separate Bash calls.
 >
+> **When the user requests a compound command:** Split it into separate Bash tool calls and execute each independently. Do NOT drop or skip any part of the requested command -- the permission system handles whether each individual command is allowed, prompted, or denied. The agent's job is to split, not to filter.
+>
 > This applies to ALL agents: main context, Task agents, Team members, and any other subagent type.
 
 ---
