@@ -60,14 +60,15 @@ Parse the argument to determine which mode to use:
 ## Step 2: Load Context
 
 1. Read `CLAUDE.md` if it exists (project conventions, tech stack)
-2. For plan-driven: read `plan.md` and all `T-NNN.md` task files
-3. For task-reference:
+2. Check for `standards/` directory. Read all `*.md` files found. Store as STANDARDS_CONTEXT. Pass alongside CLAUDE.md to orchestration.md. Priority order: CLAUDE.md > standards/ files > auto-detection > general best practices. The absence of standards files does not disable agent judgment.
+3. For plan-driven: read `plan.md` and all `T-NNN.md` task files
+4. For task-reference:
    - Locate the task file: search `plans/` directories for a file matching the `T-NNN` pattern (e.g., `plans/*/T-003.md`). If a path is given directly, use it.
    - If not found, stop with error: `ERROR: Task file T-NNN not found in any plan directory under plans/.`
    - Read the parent `plan.md` (same directory as the task file) for full project context
    - Read the task file and extract frontmatter: `task`, `status`, `depends-on`, `satisfies-bac`, `satisfies-qac`
    - Verify all `depends-on` tasks have `status: done`. If any dependency is not done, stop with error: `ERROR: Task T-NNN has unsatisfied dependencies: T-XXX (status: pending), T-YYY (status: pending). Complete those tasks first.`
-4. For ad-hoc: parse the description for scope and intent
+5. For ad-hoc: parse the description for scope and intent
 
 ## Step 3: Hand Off to Orchestration
 

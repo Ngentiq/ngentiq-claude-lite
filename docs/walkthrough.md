@@ -19,6 +19,7 @@ bash /tmp/ngentiq-claude-lite/install.sh ~/my-project
 [2/4] Copying skills...
 [3/4] Configuring settings.json...
 [4/4] Setting up project customization...
+      Created standards/ directory
 
 Installation Complete
   Restart Claude Code, then run /setup.
@@ -43,12 +44,43 @@ Detected Technologies:
 
 Generated: CLAUDE.md (project conventions, build commands, structure)
 Created:   plans/ directory
+Created:   standards/ directory
 
 Next steps:
+  /standards           — generate project standards
   /plan <feature>      — start planning a feature
 ```
 
-## 3. Plan a Feature
+## 3. Generate Standards
+
+```
+/standards
+```
+
+The standards skill analyzes your codebase and generates conventions documentation:
+
+```
+Mode: Brownfield (124 source files detected)
+
+Generating standards:
+  coding-standards.md .............. DONE (18 Established, 5 Majority, 3 Observation)
+  testing-standards.md ............. DONE (12 Established, 2 Majority)
+  architecture-standards.md ........ DONE (8 Established, 4 Majority, 1 Observation)
+  api-standards.md ................. DONE (10 Established, 3 Majority)
+
+Updated: CLAUDE.md (Conventions section linked to standards/)
+
+Cross-file consistency check: No conflicts found.
+
+HARD STOP -- Review the generated standards files and make edits before committing.
+  - Edit Rationale fields to document WHY conventions were chosen
+  - Resolve any Observations Requiring Decision
+  - Run /standards-check to preview enforcement impact.
+```
+
+Run `/standards coding` to generate only one category. Run `/standards --init` on a new project for best-practice templates.
+
+## 4. Plan a Feature
 
 ```
 /plan Add rate limiting to API routes
@@ -83,7 +115,7 @@ Risk Assessment: Low (isolated middleware, no schema changes)
 ⚠ HARD STOP — Review the plan before proceeding.
 ```
 
-## 4. Decompose into Tasks
+## 5. Decompose into Tasks
 
 ```
 /tasks P-001
@@ -104,7 +136,7 @@ Created 4 task files in plans/P-001-rate-limiting/:
          → satisfies QAC-1, QAC-2, QAC-3
 ```
 
-## 5. Implement
+## 6. Implement
 
 ```
 /implement --plan P-001
@@ -141,7 +173,7 @@ You can also implement a single task:
 
 This locates T-003 in the plan, verifies its dependencies (T-001) are done, and executes it as a single-agent operation.
 
-## 6. Review
+## 7. Review
 
 ```
 /review
@@ -167,7 +199,33 @@ src/middleware/__tests__/rate-limiter.test.ts
 Summary: 0 critical, 0 error, 1 warning, 1 info
 ```
 
-## 7. Generate Tests
+## 8. Check Standards Compliance
+
+```
+/standards-check
+```
+
+The standards-check skill verifies code against project standards:
+
+```
+Standards Check: 3 files vs 4 standards files
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+| Standards File           | Errors | Warnings | Suppressed |
+|--------------------------|--------|----------|------------|
+| coding-standards.md      | 0      | 1        | 0          |
+| testing-standards.md     | 0      | 0        | 0          |
+| architecture-standards.md| 0      | 0        | 0          |
+| api-standards.md         | 0      | 0        | 0          |
+
+W-001  src/app.ts:42
+  Standard: "Import order: framework imports, then internal modules"
+  Found: middleware import before express import
+
+Result: 0 errors, 1 warning
+```
+
+## 9. Generate Tests
 
 ```
 /test src/middleware/rate-limiter.ts
@@ -190,7 +248,7 @@ Running tests...
 Summary: 3 new tests added, all passing.
 ```
 
-## 8. Create PR
+## 10. Create PR
 
 ```
 /pr --create

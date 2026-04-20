@@ -75,32 +75,17 @@ npx vitest --coverage
 
 ## Conventions
 
-### Naming
-- **Files**: kebab-case (`user-service.ts`, `auth-middleware.ts`)
-- **Variables/functions**: camelCase (`getUserById`, `isAuthenticated`)
-- **Types/interfaces**: PascalCase (`UserResponse`, `CreateOrderInput`)
-- **Database tables**: snake_case plural (`user_accounts`, `order_items`)
-- **Environment variables**: SCREAMING_SNAKE (`DATABASE_URL`, `JWT_SECRET`)
+Project standards are maintained in the `standards/` directory. Run `/standards` to generate or update. The table below is generated -- content varies by project.
 
-### Error Handling
-- Business errors extend `AppError` (includes status code and error code)
-- Catch at the API boundary in the error middleware -- services throw, handlers don't catch
-- Never swallow errors silently -- always log or re-throw
-- Use typed error codes (`USER_NOT_FOUND`, `INSUFFICIENT_STOCK`) not just HTTP status
+| Standards File | Covers |
+|---------------|--------|
+| [Coding Standards](standards/coding-standards.md) | Naming, module structure, error handling, imports |
+| [Testing Standards](standards/testing-standards.md) | Test structure, naming, assertions, coverage |
+| [Architecture Standards](standards/architecture-standards.md) | Layer boundaries, dependency rules, patterns |
+| [API Standards](standards/api-standards.md) | Endpoint naming, error format, auth, versioning |
 
-### API Patterns
-- RESTful resource naming: `/api/v1/users`, `/api/v1/orders/{id}/items`
-- Request validation with Zod schemas (defined alongside route handlers)
-- Pagination: cursor-based for lists, `?cursor=xxx&limit=20`
-- Error responses follow RFC 7807 (Problem Details for HTTP APIs)
-- All responses wrapped in `{ data, meta }` for lists or `{ data }` for singles
-
-### Testing
-- Co-located unit tests: `user-service.test.ts` next to `user-service.ts`
-- Integration tests in `tests/`: test full API request/response cycles
-- Test factories in `tests/fixtures/` for consistent test data
-- Mock external services (payment gateway, email), never mock the database
-- Each test describes behavior: `should return 404 when user not found`
+> Run `/standards <category>` to add more categories.
+> Run `/standards-check` to verify compliance.
 
 ### Git
 - Conventional Commits: `feat:`, `fix:`, `refactor:`, `test:`, `docs:`, `chore:`

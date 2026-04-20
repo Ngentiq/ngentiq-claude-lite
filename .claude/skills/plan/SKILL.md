@@ -43,6 +43,8 @@ Read `CLAUDE.md` to determine:
 - Conventions (naming, testing, error handling)
 - Available agents
 
+Read all files in `standards/` if the directory exists. Architecture and coding standards inform impact analysis. Priority order: CLAUDE.md > standards/ files > auto-detection > general best practices. The absence of standards files does not disable agent judgment.
+
 This context shapes the impact analysis and implementation plan. If CLAUDE.md is missing, proceed with reduced context.
 
 ### Step 2: Analyze Requirements
@@ -71,6 +73,8 @@ Each agent reports:
 - Patterns established in that area (conventions to follow)
 - Gaps or extension points for the new feature
 - Potential conflicts or concerns
+
+Agents receive standards context to report whether existing code follows or diverges from established patterns.
 
 Follow the detailed workflow in [workflow.md](workflow.md) for scope assessment and impact analysis structure.
 

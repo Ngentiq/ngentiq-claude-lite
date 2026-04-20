@@ -3,7 +3,7 @@ name: review
 description: "Code review with severity-based findings against project standards and best practices"
 argument-hint: "[file-or-scope] [--staged] [--branch <ref>]"
 context: fork
-allowed-tools: ["Read", "Grep", "Glob", "Bash(git log:*)", "Bash(git diff:*)", "Bash(git status:*)", "Bash(git branch:*)"]
+allowed-tools: ["Read", "Grep", "Glob", "Bash(git log:*)", "Bash(git diff:*)", "Bash(git status:*)", "Bash(git branch:*)", "Agent"]
 ---
 
 # Code Review
@@ -36,6 +36,8 @@ Detect linting/formatting configuration by scanning for:
 
 These inform review context but the review does not run linters -- it applies human-level judgment.
 
+Check for `standards/` directory. Read all `*.md` files found. Include their content as additional conventions context. Priority order: CLAUDE.md > standards/ files > auto-detection > general best practices. Standards are additive context, not exclusive scope. If no standards files found: log `No project standards found. Consider running /standards.`
+
 ### Step 2: Determine Review Scope
 
 | Mode | Trigger | What Is Reviewed |
@@ -62,6 +64,7 @@ Each agent receives:
 - The list of files to review (with full content)
 - For diff-based modes: the diff context showing what changed
 - Project conventions from CLAUDE.md (if available)
+- Loaded standards context from `standards/` (if available), passed alongside CLAUDE.md conventions
 - Detected linting configuration context
 
 Each agent reports findings with:
@@ -110,6 +113,7 @@ Next: `/test` (generate tests) | `/pr` (generate PR description) | `/implement` 
 - **Actionable findings**: Every finding must include a specific suggested fix, not generic advice
 - **No padding**: Only report real issues. If the code is clean, say so. Do not manufacture findings to appear thorough
 - **Expert perspective**: Review as a principal engineer would -- prioritize issues that affect production reliability, security, and long-term maintainability
+- **Relationship to /standards-check**: `/review` is broad quality review; `/standards-check` is narrow compliance check. The maintainability agent should note when standards exist and reference `/standards-check` for detailed compliance
 
 ## Sub-Agent Awareness
 

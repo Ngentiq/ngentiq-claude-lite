@@ -79,6 +79,7 @@ When sending work to teammates via `SendMessage`, include:
 - Clear description of what to implement
 - Specific files to create or modify
 - Conventions from CLAUDE.md to follow
+- STANDARDS_CONTEXT alongside CLAUDE.md conventions (agent prompts include both)
 - For test writers: what to test, expected patterns, QAC items to satisfy
 - Mandatory return format: state COMPLETE or FAILED, summarize what was done in under 200 tokens, write all output to files
 
@@ -137,7 +138,7 @@ The coordinator delegates and monitors. It does NOT implement.
 
 After implementation completes, verify the work:
 
-1. **Conventions check**: If CLAUDE.md has a Conventions section, spawn a Task agent to review the changed files against those conventions. The agent reports any violations.
+1. **Conventions check**: If CLAUDE.md has a Conventions section, spawn a Task agent to review the changed files against those conventions. The agent reports any violations. Conventions check applies the same severity model as /standards-check: Established violations = error (blocks completion), Majority violations = warning. Deprecated and Under Review conventions are not checked. If standards have Scope fields, only check conventions against files matching the scope.
 2. **Test execution**: If tests were written, attempt to run them. Report pass/fail.
 3. **Scope check**: Verify that the implementation matches the plan scope (plan-driven) or the description (ad-hoc). Flag any files modified that were not in scope.
 

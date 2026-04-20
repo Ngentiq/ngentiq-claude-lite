@@ -152,6 +152,93 @@ Claude Code automatically discovers agents in `.claude/agents/`. They appear as 
 
 ---
 
+## Customizing Standards
+
+The `/standards` skill generates standards files in `standards/` at your project root. These files are team artifacts -- editable, version-controlled, and reviewable via PR.
+
+### Incremental Adoption
+
+Start with one category and expand over time:
+
+```
+/standards coding                   # Start here -- coding conventions only
+/standards testing                  # Add testing standards when ready
+/standards architecture             # Add architecture standards later
+```
+
+`/standards-check` only checks against files that exist in `standards/`. Missing categories are ignored, not treated as failures. There is no pressure to generate all categories at once.
+
+### Handling Disagreements
+
+When team members disagree on a convention:
+
+1. Change the convention's Consistency to `Under Review` -- this prevents enforcement by `/standards-check`
+2. Add both positions to the Observations Requiring Decision section
+3. Decide as a team and record the decision with Rationale, Decided-by, and Date fields
+4. Run `/standards --review` to process pending decisions interactively
+
+Standards files support a PR-based review workflow. Propose changes in a branch, review as a team, merge when agreed.
+
+### Framework Migration
+
+When migrating frameworks or languages (e.g., JavaScript to TypeScript, Express to Fastify):
+
+1. Complete the migration in source code first
+2. Re-run `/standards` for affected categories
+3. Review any split patterns during the transition period
+4. Re-run `/standards` again after migration is complete for clean Established markers
+
+The skill detects tech stack changes and warns about potentially stale conventions.
+
+### Onboarding New Team Members
+
+Standards files serve as living documentation for new contributors:
+
+- Point new developers to `standards/` for project conventions
+- Have them run `/standards-check --all` to understand current compliance
+- Rationale fields explain WHY conventions were chosen, not just what they are
+- Observations sections show what the team is still deciding
+
+### Standards Governance
+
+Treat standards files like code:
+
+- Review changes to `standards/` via PR, just like source code
+- Consider adding `standards/` to your `CODEOWNERS` file
+- Use `/review` on standards file changes to catch inconsistencies
+- Use Change History sections to track when and why standards evolved
+
+### Multi-Stack Projects
+
+For projects with multiple languages or frameworks (e.g., .NET backend + Angular frontend):
+
+- Each convention includes a Scope field with a glob pattern (e.g., `src/backend/**/*.cs`)
+- `/standards` auto-detects stacks and generates scoped conventions
+- `/standards-check` only checks conventions against files matching their Scope
+- This prevents cross-stack false positives (e.g., enforcing C# naming in TypeScript files)
+
+### Exceptions
+
+Use `standards/.exceptions.md` to suppress known findings for specific paths:
+
+```markdown
+# Standards Exceptions
+
+## Generated Code
+- **Pattern**: `src/generated/**`
+- **Suppressed conventions**: All
+- **Reason**: Auto-generated protobuf output, not hand-written
+
+## Legacy Module
+- **Pattern**: `src/legacy/billing/**`
+- **Suppressed conventions**: coding-standards/Naming
+- **Reason**: Pre-migration code, will be rewritten in Q3
+```
+
+Every codebase has justified exceptions -- generated code, legacy modules, third-party integrations. Document the reason for each so future team members understand why the exception exists.
+
+---
+
 ## Adding Custom Skills
 
 Skills are slash commands defined by `SKILL.md` files in `.claude/skills/`.

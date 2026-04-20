@@ -9,7 +9,7 @@
 #   1. Copies .claude/sdlc/ (hooks + rules) to target
 #   2. Copies .claude/skills/ to target
 #   3. Merges hooks into target's .claude/settings.json (non-destructive)
-#   4. Creates .claude/PROJECT-RULES.md placeholder if missing
+#   4. Creates .claude/PROJECT-RULES.md placeholder and standards/ directory if missing
 #   5. Prints installation summary
 #
 # Prerequisites: Node.js 18+, jq (for settings merge)
@@ -153,6 +153,12 @@ else
   echo "      .claude/PROJECT-RULES.md already exists (preserved)"
 fi
 
+# Create standards directory
+if [ ! -d "$TARGET/standards" ]; then
+    mkdir "$TARGET/standards"
+    echo "      Created standards/ directory"
+fi
+
 # --- Summary ---
 
 echo ""
@@ -168,6 +174,7 @@ echo "  - Config: .claude/settings.json"
 echo ""
 echo "Customization:"
 echo "  - .claude/PROJECT-RULES.md  (add project-specific rules)"
+echo "  - standards/                (project coding/architecture standards)"
 echo "  - .claude/sdlc/rules/       (edit framework rules directly)"
 echo ""
 echo "Next steps:"

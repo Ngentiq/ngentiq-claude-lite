@@ -41,6 +41,8 @@ Examine the diffs to determine:
 
 Review recent commit messages from Step 1 to match the project's existing style (e.g., whether they use scopes, capitalization patterns, issue references).
 
+Check `standards/` for any file containing git or commit convention sections. If found, use those conventions. Priority: CLAUDE.md > standards/ files > git log style > conventional commits default.
+
 ### Step 3: Generate Commit Message
 
 Produce a conventional commit message following the format in [commit-template.md](commit-template.md). The message must include:
