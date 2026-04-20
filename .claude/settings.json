@@ -34,7 +34,6 @@
       "Bash(npx vitest:*)",
       "Bash(npx tsc:*)",
       "Bash(node .claude/sdlc/:*)",
-      "Bash(git -C *)",
       "Bash(git status:*)",
       "Bash(git log:*)",
       "Bash(git diff:*)",

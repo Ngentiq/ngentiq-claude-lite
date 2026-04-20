@@ -1,0 +1,24 @@
+# .npmignore -- exclude development artifacts from the published tarball.
+# When present, .npmignore takes precedence over .gitignore for npm pack.
+
+# Tests, docs, and examples are not shipped to consumers
+tests/
+docs/
+examples/
+
+# Legacy / developer-only installers (the published bin/cli.js replaces these)
+install.sh
+install.ps1
+
+# Internal project guidance -- not for consumers
+CLAUDE.md
+
+# Source control and CI metadata
+.git/
+.github/
+.gitignore
+
+# Local Node state
+node_modules/
+npm-debug.log
+.DS_Store

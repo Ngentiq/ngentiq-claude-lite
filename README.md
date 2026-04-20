@@ -1,10 +1,8 @@
 # ngentiq-claude-lite
 
-[![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+A lightweight SDLC framework for [Claude Code](https://claude.ai/code). One hook injects rules on every prompt to maintain consistent AI behavior -- delegation discipline, concise returns, truthfulness, and command safety. Nine skills cover the full development lifecycle from planning through PR creation.
 
-A lightweight, open-source SDLC framework for [Claude Code](https://claude.ai/code). One hook injects rules on every prompt to maintain consistent AI behavior -- delegation discipline, concise returns, truthfulness, and command safety. Nine skills cover the full development lifecycle from planning through PR creation.
-
-MIT licensed. No dependencies. No build step.
+Proprietary license (personal non-commercial use free). No build step.
 
 ## Why This Framework
 
@@ -18,20 +16,27 @@ CLAUDE.md instructions fade as your conversation grows -- Claude's context windo
 
 ## Quick Install
 
-**Prerequisites**: Claude Code (which provides Node.js)
+**Prerequisites**: Node.js 18+ (Claude Code ships with a recent Node)
 
-### Unix / macOS / WSL
+### Recommended -- via npm
 
 ```bash
-git clone https://github.com/Ngentiq/ngentiq-claude-lite.git /tmp/ngentiq-claude-lite
-bash /tmp/ngentiq-claude-lite/install.sh /path/to/your/project
+npx @ngentiq/claude-lite init /path/to/your/project
 ```
 
-### Windows PowerShell
+Works on macOS, Linux, WSL, and Windows. No clone, no shell script.
 
-```powershell
-git clone https://github.com/Ngentiq/ngentiq-claude-lite.git $env:TEMP/ngentiq-claude-lite
-& $env:TEMP/ngentiq-claude-lite/install.ps1 -Target C:\path\to\your\project
+### Local development (optional)
+
+If you have a local checkout of this repository, the legacy shell installers
+still work:
+
+```bash
+# Unix / macOS / WSL
+bash install.sh /path/to/your/project
+
+# Windows PowerShell
+./install.ps1 -Target C:\path\to\your\project
 ```
 
 Then restart Claude Code and run:
@@ -81,10 +86,18 @@ Because the hook re-injects rules on every interaction, they remain active regar
 - [Customization Guide](docs/customization.md) -- How to extend and adapt the framework
 - [Example CLAUDE.md](examples/CLAUDE.md.example) -- Template for a Node.js/TypeScript project
 
-## Contributing
+## Feedback
 
-Issues and pull requests are welcome. If you find a bug or have an idea for improvement, please [open an issue](https://github.com/Ngentiq/ngentiq-claude-lite/issues).
+This is a closed-source product. Bug reports, feature requests, and other
+feedback are welcome by email:
+
+- scott@wilkos.net
+- licensing@ngentiq.com (commercial inquiries)
 
 ## License
 
-MIT -- see [LICENSE](LICENSE) for details.
+Personal Non-Commercial License v1.1 -- see [LICENSE](LICENSE).
+
+Commercial use requires a separate license -- see
+[LICENSE-COMMERCIAL.md](LICENSE-COMMERCIAL.md). Naming and trademark usage
+is governed by [TRADEMARK.md](TRADEMARK.md).

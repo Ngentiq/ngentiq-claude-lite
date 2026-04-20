@@ -2,9 +2,9 @@
 
 ## What This Is
 
-ngentiq-claude-lite is a lightweight, open-source SDLC framework for Claude Code. It solves a fundamental problem: CLAUDE.md instructions fade as conversations grow, causing Claude to lose track of rules, conventions, and delegation patterns. This framework uses Claude Code hooks to re-inject critical rules on every prompt, guaranteeing consistent behavior regardless of conversation length.
+ngentiq-claude-lite is a lightweight SDLC framework for Claude Code. It solves a fundamental problem: CLAUDE.md instructions fade as conversations grow, causing Claude to lose track of rules, conventions, and delegation patterns. This framework uses Claude Code hooks to re-inject critical rules on every prompt, guaranteeing consistent behavior regardless of conversation length.
 
-The project is MIT licensed and hosted at https://github.com/Ngentiq/ngentiq-claude-lite.
+Closed-source, published as @ngentiq/claude-lite on npm. Source repo is private.
 
 ## Architecture
 
@@ -122,4 +122,4 @@ This project is a lightweight extraction of patterns from [ngentiq-claude](https
 | Build | TypeScript requiring compilation | Plain JavaScript |
 | Task tracking | Automatic per-prompt lifecycle | None |
 | Rules | 7 laws + orchestration | 3 rules + bash preamble |
-| License | Proprietary | MIT |
+| License | Proprietary | Proprietary (Personal Non-Commercial) |

@@ -1,21 +1,154 @@
-MIT License
+Personal Non-Commercial License v1.1
 
-Copyright (c) 2025-2026 ngentiq-claude-lite contributors
+Copyright (c) 2025-2026 Scott Wilkos / ngentiq
+All rights reserved.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+THIS IS NOT AN OPEN SOURCE LICENSE.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+This license permits personal, non-commercial use only.
+Any commercial use requires a separate commercial license.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+---
+
+## 1. Definitions
+
+1.1 "Software" means the source code, compiled output, documentation,
+and any materials distributed as part of the ngentiq-claude-lite package,
+including any modifications or derivative works.
+
+1.2 "You" means an individual or legal entity exercising permissions
+under this license.
+
+1.3 "Non-Commercial Use" means use that is not intended for, directed
+toward, or resulting in commercial advantage, business use, or monetary
+compensation of any kind.
+
+1.4 "Commercial Use" includes, but is not limited to:
+
+(a) use by or for a for-profit entity, including internal use;
+
+(b) use in connection with providing, supporting, or developing goods
+or services for which any consideration is received, directly or indirectly;
+
+(c) use to develop, operate, or provide a hosted or managed service
+(including SaaS) to third parties;
+
+(d) distribution, sublicensing, licensing, selling, or monetizing the
+Software or any derivative work;
+
+(e) use where the Software is a dependency of software used for any of
+the purposes described above;
+
+(f) use by a contractor, consultant, or agent performing work for or on
+behalf of a for-profit entity.
+
+1.5 "Derivative Work" means any work based upon the Software, including
+modifications, adaptations, translations, or works incorporating all or
+part of the Software.
+
+1.6 "Competing Product" means any product or service, whether commercial
+or non-commercial, that provides functionality substantially similar to,
+or is marketed as a substitute for, the Software.
+
+---
+
+## 2. License Grant (Non-Commercial)
+
+Subject to the terms of this license, You are granted a limited,
+non-exclusive, non-transferable, worldwide, royalty-free license to:
+
+(a) use the Software solely for Non-Commercial Use;
+
+(b) copy and modify the Software solely for Non-Commercial Use; and
+
+(c) redistribute the Software, with or without modifications, solely
+for Non-Commercial Use, provided that You include this license in full
+with any redistribution.
+
+---
+
+## 3. Commercial Use Requires Separate License
+
+Any Commercial Use is strictly prohibited unless You have obtained a
+separate written commercial license agreement from the copyright
+holder(s).
+
+---
+
+## 4. Competing Products Restriction
+
+You may not use the Software, in whole or in part, to develop, operate,
+or distribute a Competing Product without a separate written agreement,
+regardless of whether such use is commercial or non-commercial.
+
+---
+
+## 5. Ownership
+
+The Software operates under a three-tier ownership model:
+
+(a) MANAGED TIER
+Files distributed as part of the Software (e.g., `.claude/sdlc/`,
+including framework hooks, rules, and skills) are the intellectual
+property of ngentiq and are licensed, not sold.
+
+(b) CUSTOMER TIER
+Configurations, agents, rules, skills, and other artifacts created by
+or for a customer (e.g., `.claude/PROJECT-RULES.md`, customer-authored
+agents under `.claude/agents/`, project `CLAUDE.md`) are the exclusive
+property of that customer. No rights are claimed by ngentiq over such
+content.
+
+(c) USER TIER
+Personal settings and local configurations (e.g.,
+`.claude/settings.local.json`) are the exclusive property of the
+individual user. No rights are claimed by ngentiq.
+
+---
+
+## 6. No Trademark Rights
+
+This license does not grant any rights to use the names, logos,
+or trademarks of ngentiq or the copyright holder(s). See TRADEMARK.md
+for the trademark policy.
+
+---
+
+## 7. Termination
+
+This license terminates automatically upon any violation.
+
+Upon termination, You must immediately cease all use, copying,
+modification, and distribution of the Software.
+
+Sections 5 through 9 survive termination.
+
+---
+
+## 8. Disclaimer of Warranty
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND
+NON-INFRINGEMENT.
+
+---
+
+## 9. Limitation of Liability
+
+TO THE MAXIMUM EXTENT PERMITTED BY LAW, IN NO EVENT SHALL THE
+COPYRIGHT HOLDER(S) BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE,
+ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE
+OR OTHER DEALINGS IN THE SOFTWARE.
+
+---
+
+## 10. Commercial Licensing
+
+Commercial licenses are available separately.
+
+See LICENSE-COMMERCIAL.md or contact:
+
+- licensing@ngentiq.com
+- scott@wilkos.net
