@@ -2,7 +2,7 @@
 
 [![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-A lightweight, open-source SDLC framework for [Claude Code](https://claude.ai/code). One hook injects rules on every prompt to maintain consistent AI behavior -- delegation discipline, concise returns, truthfulness, and command safety. Nine skills cover the full development lifecycle from planning through PR creation.
+A lightweight, open-source SDLC framework for [Claude Code](https://claude.ai/code). One hook injects rules on every prompt to maintain consistent AI behavior -- delegation discipline, concise returns, truthfulness, and command safety. Eleven skills cover the full development lifecycle from planning through PR creation.
 
 MIT licensed. No dependencies. No build step.
 
@@ -47,6 +47,8 @@ This detects your tech stack, generates a project-specific `CLAUDE.md`, and veri
 | Skill | Command | Description |
 |-------|---------|-------------|
 | Setup | `/setup` | Detect technologies, wire hooks, generate CLAUDE.md |
+| Standards | `/standards [category]` | Generate or update project coding and architecture standards |
+| Standards Check | `/standards-check [path]` | Verify code compliance against project standards |
 | Plan | `/plan <feature>` | Feature planning with business/QA acceptance criteria and impact analysis |
 | Tasks | `/tasks <plan-ref>` | Decompose a plan into numbered task files with dependencies |
 | Implement | `/implement <plan-or-desc>` | Execute implementation with agent delegation and verification |

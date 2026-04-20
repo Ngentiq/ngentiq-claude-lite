@@ -9,7 +9,7 @@
 #   1. Copies .claude/sdlc/ (hooks + rules) to target
 #   2. Copies .claude/skills/ to target
 #   3. Merges hooks into target's .claude/settings.json (non-destructive)
-#   4. Creates .claude/PROJECT-RULES.md placeholder if missing
+#   4. Creates .claude/PROJECT-RULES.md placeholder and standards/ directory if missing
 #   5. Prints installation summary
 #
 # Prerequisites: Node.js 18+
@@ -176,6 +176,13 @@ if (-not (Test-Path $projectRules)) {
     Write-Host "      .claude\PROJECT-RULES.md already exists (preserved)"
 }
 
+# Create standards directory
+$standardsDir = Join-Path $Target "standards"
+if (-not (Test-Path $standardsDir)) {
+    New-Item -ItemType Directory -Force -Path $standardsDir | Out-Null
+    Write-Host "      Created standards/ directory"
+}
+
 # --- Summary ---
 
 Write-Host ""
@@ -191,6 +198,7 @@ Write-Host "  - Config: .claude\settings.json"
 Write-Host ""
 Write-Host "Customization:"
 Write-Host "  - .claude\PROJECT-RULES.md  (add project-specific rules)"
+Write-Host "  - standards\                (project coding/architecture standards)"
 Write-Host "  - .claude\sdlc\rules\       (edit framework rules directly)"
 Write-Host ""
 Write-Host "Next steps:"

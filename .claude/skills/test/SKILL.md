@@ -50,6 +50,8 @@ Spawn a Task agent to scan the project and determine:
 
 If `CLAUDE.md` specifies test commands or conventions, those take priority over detection.
 
+If `standards/testing-standards.md` exists: load and merge with detected conventions. Priority order: CLAUDE.md > standards files > auto-detection > general best practices. The absence of a standards file does not disable agent judgment.
+
 ### Step 2: Identify Targets
 
 | Mode | Trigger | Files Targeted |

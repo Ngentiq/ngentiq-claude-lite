@@ -16,14 +16,86 @@ Detailed documentation for each skill in the framework. Skills are invoked as sl
 - `CLAUDE.md` at project root with detected tech stack, project structure, and workflow references
 - Verifies `.claude/settings.json` has hooks wired correctly
 - Creates `plans/` directory for feature planning
-- Reports a summary of detected technologies and suggests next steps
+- Creates `standards/` directory for project standards
+- Reports a summary of detected technologies, existing standards, and suggests next steps
 
 **Example**:
 ```
 /setup
 ```
 
-**Notes**: Safe to re-run (idempotent). Updates existing CLAUDE.md rather than overwriting manual edits. Run this first after installation.
+**Notes**: Safe to re-run (idempotent). If CLAUDE.md exists, prompts with options: keep, merge, or replace. Run this first after installation.
+
+---
+
+## /standards
+
+**Description**: Generate or update project coding and architecture standards by analyzing the codebase (brownfield) or applying best practices for the detected tech stack (greenfield).
+
+**Usage**: `/standards [category] [--init] [--review]`
+
+**Arguments**:
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `[category]` | No | Specific category: `coding`, `architecture`, `testing`, or `api`. If omitted, generates all relevant categories. |
+| `--init` | No | Force greenfield mode (best practices, no codebase analysis) |
+| `--review` | No | Interactively review Observations and make team decisions |
+
+**What it produces**:
+- `standards/coding-standards.md` -- naming, module structure, error handling, imports, logging
+- `standards/architecture-standards.md` -- module boundaries, dependency rules, layer patterns
+- `standards/testing-standards.md` -- test structure, naming, mocking, assertions, coverage
+- `standards/api-standards.md` -- endpoint naming, error format, auth, versioning, pagination
+- Updated CLAUDE.md Conventions section linking to generated standards files
+
+Each convention includes: Convention, Consistency level (Established/Majority/Observation/Deprecated), Rationale, Scope, and Examples.
+
+**Example**:
+```
+/standards                    # Generate all relevant categories
+/standards coding             # Generate only coding standards
+/standards --init             # Force best-practice templates (greenfield)
+/standards --review           # Resolve pending Observations interactively
+```
+
+**Notes**: Ends with a **hard stop** after generating files -- review standards before committing. Brownfield mode reports what IS (facts only). Greenfield mode marks all conventions as `Established (template)`. Safe to re-run: preserves manual edits outside `<!-- generated -->` markers, detects drift, and appends to Change History. Irrelevant categories (e.g., `api` for CLI tools) are auto-skipped unless explicitly requested.
+
+**Related**: `/setup` -> `/standards` (this skill) -> `/plan`
+
+---
+
+## /standards-check
+
+**Description**: Verify code compliance against project standards files.
+
+**Usage**: `/standards-check [path] [--staged] [--all]`
+
+**Arguments**:
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `[path]` | No | Specific file or directory to check |
+| `--staged` | No | Check staged files only |
+| `--all` | No | Check all source files (full scan) |
+
+**What it produces**:
+- Structured compliance report with findings grouped by standards file:
+  - **Error**: Violates Established convention
+  - **Warning**: Violates Majority convention
+  - **Conflict**: Contradictory findings between standards files
+- Summary table with error/warning/conflict/suppressed counts per standards file
+- Result line: PASS or counts of errors, warnings, and conflicts
+
+**Example**:
+```
+/standards-check                     # Check changed files vs default branch
+/standards-check src/api/            # Check specific directory
+/standards-check --staged            # Check staged files only
+/standards-check --all               # Full scan of all source files
+```
+
+**Notes**: Read-only -- never modifies source files. Only checks Established and Majority conventions (Observation, Deprecated, Under Review are informational only). Respects Scope fields for multi-stack projects. Loads `.exceptions.md` to suppress known findings. Exits cleanly when no standards files exist.
+
+**Related**: `/standards` -> `/standards-check` (this skill), `/review` + `/standards-check`
 
 ---
 
@@ -284,13 +356,15 @@ Detailed documentation for each skill in the framework. Skills are invoked as sl
 
 ```
 /setup                              # 1. Onboard the project
-/plan Add user authentication       # 2. Plan a feature
-/tasks P-001                        # 3. Decompose into tasks
-/implement P-001                    # 4. Execute implementation
-/review                             # 5. Review changes
-/test src/auth/                     # 6. Generate tests
-/commit                             # 7. Commit with conventional message
-/pr --create                        # 8. Create the PR
+/standards                          # 2. Generate project standards
+/plan Add user authentication       # 3. Plan a feature
+/tasks P-001                        # 4. Decompose into tasks
+/implement P-001                    # 5. Execute implementation
+/review                             # 6. Review changes
+/standards-check                    # 7. Check standards compliance
+/test src/auth/                     # 8. Generate tests
+/commit                             # 9. Commit with conventional message
+/pr --create                        # 10. Create the PR
 ```
 
 Each skill is independent -- you can use any skill at any time without following the full workflow.

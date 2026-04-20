@@ -1,6 +1,6 @@
 ---
 name: setup
-description: "Project onboarding: detect technologies, create CLAUDE.md, verify hooks, initialize plans directory"
+description: "Project onboarding: detect technologies, create CLAUDE.md, verify hooks, initialize plans and standards directories"
 argument-hint: ""
 context: fork
 allowed-tools: ["Read", "Write", "Edit", "Glob", "Grep", "Bash(ls:*)", "Bash(mkdir:*)", "Bash(node:*)", "Bash(git:*)"]
@@ -134,12 +134,20 @@ Check `.claude/settings.json` exists and contains the expected hook configuratio
    Run the installer to fix: bash install.sh
    ```
 
-### Step 7: Create Plans Directory
+### Step 7: Create Plans and Standards Directories
 
 If `plans/` does not exist at the project root, create it:
 
 ```
 mkdir plans
+```
+
+If it already exists, skip this step.
+
+If `standards/` does not exist at the project root, create it:
+
+```
+mkdir standards
 ```
 
 If it already exists, skip this step.
@@ -163,6 +171,18 @@ Display the onboarding summary:
 ### Created
 - CLAUDE.md with project context
 - plans/ directory for feature plans
+- standards/ directory for project standards
+
+### Standards
+If `standards/` exists and contains populated `*.md` files, list them:
+
+| File | Conventions |
+|------|-------------|
+| {filename} | {count} conventions defined |
+
+Review these before contributing.
+
+If `standards/` is empty or does not exist: `No standards files found. Consider running /standards to generate project standards.`
 
 ### Verified
 - Hook wiring: {verified | WARNING: incomplete}
@@ -178,7 +198,7 @@ As part of the summary, report any sub-agents found in `.claude/agents/`. If non
 
 ## Constraints
 
-- **Read-only on source code**: This skill does NOT modify any source code files. It only creates/updates CLAUDE.md and the plans/ directory
+- **Read-only on source code**: This skill does NOT modify any source code files. It only creates/updates CLAUDE.md and the plans/ and standards/ directories
 - **No overwrite without consent**: If CLAUDE.md exists, always ask before replacing
 - **Technology detection is best-effort**: Report what was found, do not guess or fabricate technologies not evidenced by manifest files
 - **No configuration files**: This skill does not create or require any configuration beyond CLAUDE.md

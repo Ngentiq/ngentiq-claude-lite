@@ -38,10 +38,12 @@ Available SDLC skills for this project:
 
 | Skill | Purpose |
 |-------|---------|
+| `/standards [category]` | Generate or update project coding and architecture standards |
+| `/standards-check [path]` | Verify code compliance against project standards |
 | `/plan <feature>` | Create a structured feature plan with impact analysis |
 | `/tasks <plan-ref>` | Decompose a plan into numbered task files |
 | `/implement <plan-or-description>` | Execute implementation with agent delegation |
-| `/review` | Code review against project conventions |
+| `/review` | Code review against project conventions and standards |
 | `/test <target>` | Generate tests for uncovered code |
 | `/explain <target>` | Layered code explanation: purpose, design, patterns |
 | `/commit` | Generate conventional commit message with approval flow |
@@ -49,21 +51,20 @@ Available SDLC skills for this project:
 
 ## Conventions
 
-### Naming
+Project standards are maintained in the `standards/` directory. Run `/standards` to generate or update.
 
-{Describe naming conventions: file naming, variable/function casing, class naming, constant conventions. Fill in based on detected patterns or leave for team to complete.}
+{Generate this table dynamically from existing standards files. If no standards files exist yet, show the note below instead of the table.}
 
-### Error Handling
+> Standards files not yet generated. Run `/standards` to analyze your codebase and generate standards, or `/standards --init` for best-practice templates.
 
-{Describe error handling approach: exception strategy, error types, logging patterns, user-facing error format.}
+{If standards files exist, list only the files that actually exist -- do NOT show dead links:}
 
-### Testing
+| Standards File | Covers |
+|---------------|--------|
+| [Coding Standards](standards/coding-standards.md) | Naming, structure, error handling, imports |
+{... one row per file that exists in standards/ ...}
 
-{Describe test patterns: test file location, naming convention, assertion style, mocking approach, minimum coverage expectations.}
-
-### Git
-
-{Describe git workflow: branch naming, commit message format, PR process, merge strategy.}
+> Run `/standards <category>` to add more categories. Run `/standards-check` to verify compliance.
 
 ## Agents
 

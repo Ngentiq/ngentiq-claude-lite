@@ -39,6 +39,8 @@ Spawn a Task agent to gather branch context:
 
 The agent returns: commit list, diff summary, affected file groups, area groupings, and acceptance criteria coverage.
 
+If `standards/` exists, pass any relevant conventions (PR format, branch naming) to the agent. Priority order: CLAUDE.md > standards/ files > auto-detection > general best practices. If a plan exists AND standards exist: include a standards compliance note in the PR body.
+
 ### Step 3: Generate PR Description
 
 Using the analysis, produce a structured PR description following the structure in [pr-template.md](pr-template.md). The template defines these sections: Summary, Changes by Area, Acceptance Coverage (if plan exists), Test Plan, Reviewer Notes, and Deployment Notes (if applicable).

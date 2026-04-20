@@ -27,11 +27,13 @@ The hook finds the project root via `CLAUDE_PROJECT_DIR` (set by Claude Code) or
 
 ### 3. Skills Layer (`.claude/skills/`)
 
-Nine skills covering the SDLC lifecycle, each with a `SKILL.md` and a template file:
+Eleven skills covering the SDLC lifecycle, each with a `SKILL.md` and template files:
 
 | Skill | Purpose | Template |
 |-------|---------|----------|
 | `/setup` | Project onboarding: detect tech stack, generate CLAUDE.md, verify hooks | claude-md-template.md |
+| `/standards` | Generate or update project coding and architecture standards | standards-template.md |
+| `/standards-check` | Verify code compliance against project standards | report-template.md |
 | `/plan` | Feature planning with BAC/QAC acceptance criteria | plan-template.md |
 | `/tasks` | Decompose plans into numbered task files with traceability | task-template.md |
 | `/implement` | Execute via Agent Teams with sequential fallback | completion-report-template.md |
@@ -66,8 +68,10 @@ ngentiq-claude-lite/
 │   │   └── rules/
 │   │       ├── RULES.md                 # Injected every prompt
 │   │       └── AGENT-RULES.md           # Injected on agent spawn
-│   ├── skills/                          # 9 skills, each with SKILL.md + template
+│   ├── skills/                          # 11 skills, each with SKILL.md + template
 │   │   ├── setup/
+│   │   ├── standards/
+│   │   ├── standards-check/
 │   │   ├── plan/
 │   │   ├── tasks/
 │   │   ├── implement/
@@ -117,7 +121,7 @@ This project is a lightweight extraction of patterns from [ngentiq-claude](https
 | Aspect | ngentiq-claude | ngentiq-claude-lite |
 |--------|---------------|---------------------|
 | Hooks | 13 entries across 9 events | 2 entries across 2 events |
-| Skills | 39+ with `/nq-` prefix | 9 with standard names |
+| Skills | 39+ with `/nq-` prefix | 11 with standard names |
 | Config | YAML with 250+ lines | None (zero-config) |
 | Build | TypeScript requiring compilation | Plain JavaScript |
 | Task tracking | Automatic per-prompt lifecycle | None |
