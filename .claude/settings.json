@@ -34,6 +34,7 @@
       "Bash(npx vitest:*)",
       "Bash(npx tsc:*)",
       "Bash(node .claude/sdlc/:*)",
+      "Bash(git -C *)",
       "Bash(git status:*)",
       "Bash(git log:*)",
       "Bash(git diff:*)",
@@ -50,17 +51,38 @@
       "Bash(rm:*)",
       "Bash(mv:*)",
       "Bash(git push:*)",
+      "Bash(git -C * push:*)",
       "Bash(git commit:*)",
-      "Bash(git tag:*)"
+      "Bash(git -C * commit:*)",
+      "Bash(git tag:*)",
+      "Bash(git -C * tag:*)",
+      "Bash(git merge:*)",
+      "Bash(git -C * merge:*)",
+      "Bash(git pull:*)",
+      "Bash(git -C * pull:*)",
+      "Bash(git revert:*)",
+      "Bash(git -C * revert:*)",
+      "Bash(git cherry-pick:*)",
+      "Bash(git -C * cherry-pick:*)",
+      "Bash(git am:*)",
+      "Bash(git -C * am:*)",
+      "Bash(git reset:*)",
+      "Bash(git -C * reset:*)"
     ],
     "deny": [
       "Bash(sudo:*)",
       "Bash(git push --force:*)",
+      "Bash(git -C * push --force:*)",
       "Bash(git push -f:*)",
+      "Bash(git -C * push -f:*)",
       "Bash(git reset --hard:*)",
+      "Bash(git -C * reset --hard:*)",
       "Bash(git rebase:*)",
+      "Bash(git -C * rebase:*)",
       "Bash(git clean -f:*)",
-      "Bash(git checkout --:*)"
+      "Bash(git -C * clean -f:*)",
+      "Bash(git checkout --:*)",
+      "Bash(git -C * checkout --:*)"
     ]
   },
   "hooks": {
