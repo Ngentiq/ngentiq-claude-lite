@@ -156,6 +156,8 @@ Claude Code automatically discovers agents in `.claude/agents/`. They appear as 
 
 Skills are slash commands defined by `SKILL.md` files in `.claude/skills/`.
 
+> **See also:** [`claude-code-skills-reference.md`](claude-code-skills-reference.md) — authoritative reference for Claude Code skill anatomy: full frontmatter table (14 fields), supporting files, string substitutions, shell injection, `context: fork`, progressive disclosure, location precedence. The table below is a quickstart subset.
+
 ### Skill File Structure
 
 Create `.claude/skills/{name}/SKILL.md`:
@@ -200,7 +202,7 @@ Description of what this skill does.
 | `description` | Yes | One-line description shown in skill listings |
 | `argument-hint` | No | Usage hint shown to the user |
 | `context` | No | `fork` for isolated context, omit for shared |
-| `allowed-tools` | No | Restrict which tools the skill can use |
+| `allowed-tools` | No | Pre-approves these tools (no per-use prompt) while the skill is active. Does not restrict — global permissions still govern. |
 | `agent` | No | `Explore` for read-only analysis skills |
 
 ### Tips
