@@ -67,11 +67,13 @@ This detects your tech stack, generates a project-specific `CLAUDE.md`, and veri
 
 The framework installs a single JavaScript file (`.claude/sdlc/hooks/sdlc-hook.js`) registered in `.claude/settings.json` as a Claude Code hook. It fires on two events:
 
-1. **`UserPromptSubmit`** -- On every prompt, the hook reads `.claude/sdlc/rules/RULES.md` (and `.claude/PROJECT-RULES.md` if present) and writes them to stdout. Claude Code captures this stdout as a `system-reminder`, making the rules visible in the model's context window.
+1. **`UserPromptSubmit`** -- On every prompt, the hook emits a small directive block listing the absolute paths of `.claude/sdlc/rules/RULES.md` (and `.claude/PROJECT-RULES.md` if present) and instructs Claude to Read each file before responding. Claude Code captures the directive as a `system-reminder` and Claude opens the rule files directly via the Read tool.
 
-2. **`SubagentStart`** -- When Claude spawns a Task agent, the hook reads `.claude/sdlc/rules/AGENT-RULES.md` and writes it to stdout. It also parses the agent's prompt for coordinator keywords (e.g., "orchestrate", "delegate") and appends coordinator-specific instructions when detected.
+2. **`SubagentStart`** -- When Claude spawns a Task agent, the hook emits a similar directive pointing at `.claude/sdlc/rules/AGENT-RULES.md` (and `.claude/sdlc/rules/AGENT-RULES-COORDINATOR.md` if you create one). It parses the agent's prompt for coordinator keywords (e.g., "orchestrate", "delegate") and appends a short inline coordination reminder when detected.
 
-Because the hook re-injects rules on every interaction, they remain active regardless of how long the conversation gets -- unlike CLAUDE.md instructions, which can drift out of working memory.
+The hook output stays under 2 KB regardless of rule-file size. This is intentional: Claude Code truncates hook stdout above ~10 KB into a `<persisted-output>` envelope that hides everything past the first 2 KB. By emitting Read-file directives instead of inlining rule content, the framework guarantees full rule delivery no matter how large `PROJECT-RULES.md` grows. See [`research/HOOK-TRUNCATION-FIX.md`](research/HOOK-TRUNCATION-FIX.md) for the full rationale.
+
+Because the hook re-issues the directive on every interaction, the rules remain active regardless of how long the conversation gets -- unlike CLAUDE.md instructions, which can drift out of working memory.
 
 ## Customization
 

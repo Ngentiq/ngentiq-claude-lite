@@ -41,6 +41,12 @@ function scaffoldProject(tmpDir, opts = {}) {
     fs.writeFileSync(projectRulesPath, opts.projectRules, 'utf8');
   }
 
+  // Optionally create AGENT-RULES-COORDINATOR.md
+  if (opts.coordinatorRules) {
+    const coordPath = path.join(rulesDir, 'AGENT-RULES-COORDINATOR.md');
+    fs.writeFileSync(coordPath, opts.coordinatorRules, 'utf8');
+  }
+
   return tmpDir;
 }
 
@@ -77,17 +83,31 @@ describe('prompt mode', () => {
     removeTempDir(tmpDir);
   });
 
-  it('outputs RULES.md content', () => {
+  it('emits directive banner pointing at RULES.md', () => {
     const result = runHook(['prompt'], { env: { CLAUDE_PROJECT_DIR: tmpDir } });
 
     assert.equal(result.status, 0, 'exit code should be 0');
+    assert.match(
+      result.stdout,
+      /\*\*\*CRITICAL\*\*\* GOVERNANCE RULES/,
+      'stdout should contain the directive banner'
+    );
     assert.ok(
-      result.stdout.includes('R1. Delegation'),
-      'stdout should contain "R1. Delegation" from RULES.md'
+      result.stdout.includes('Read this file now:'),
+      'stdout should include the Read-this-file directive'
+    );
+    assert.ok(
+      result.stdout.includes(path.join(tmpDir, '.claude', 'sdlc', 'rules', 'RULES.md')),
+      'stdout should include the absolute path to RULES.md'
+    );
+    // Content must NOT be inlined.
+    assert.ok(
+      !result.stdout.includes('R1. Delegation'),
+      'stdout should NOT inline RULES.md content (content must live in the file)'
     );
   });
 
-  it('includes PROJECT-RULES.md when present', () => {
+  it('emits directive for PROJECT-RULES.md when present', () => {
     const projectRulesContent = '## Project-Specific Rule\n\nThis project uses strict linting.';
     scaffoldProject(tmpDir, { projectRules: projectRulesContent });
 
@@ -95,27 +115,56 @@ describe('prompt mode', () => {
 
     assert.equal(result.status, 0, 'exit code should be 0');
     assert.ok(
-      result.stdout.includes('R1. Delegation'),
-      'stdout should contain RULES.md content'
+      result.stdout.includes(path.join(tmpDir, '.claude', 'sdlc', 'rules', 'RULES.md')),
+      'stdout should include the absolute path to RULES.md'
     );
     assert.ok(
-      result.stdout.includes('Project-Specific Rule'),
-      'stdout should contain PROJECT-RULES.md content'
+      result.stdout.includes(path.join(tmpDir, '.claude', 'PROJECT-RULES.md')),
+      'stdout should include the absolute path to PROJECT-RULES.md'
+    );
+    assert.ok(
+      result.stdout.includes('project governance rules'),
+      'stdout should label PROJECT-RULES.md tier'
+    );
+    // Content must NOT be inlined.
+    assert.ok(
+      !result.stdout.includes('Project-Specific Rule'),
+      'stdout should NOT inline PROJECT-RULES.md content'
     );
   });
 
-  it('works without PROJECT-RULES.md', () => {
+  it('omits PROJECT-RULES.md directive when file is absent', () => {
     // Default scaffold has no PROJECT-RULES.md
     const result = runHook(['prompt'], { env: { CLAUDE_PROJECT_DIR: tmpDir } });
 
     assert.equal(result.status, 0, 'exit code should be 0');
     assert.ok(
-      result.stdout.includes('R1. Delegation'),
-      'stdout should contain RULES.md content'
+      result.stdout.includes(path.join(tmpDir, '.claude', 'sdlc', 'rules', 'RULES.md')),
+      'stdout should include RULES.md directive'
     );
     assert.ok(
-      !result.stdout.includes('PROJECT-RULES'),
-      'stdout should not mention PROJECT-RULES when file is absent'
+      !result.stdout.includes('PROJECT-RULES.md'),
+      'stdout should not reference PROJECT-RULES.md when file is absent'
+    );
+  });
+
+  it('output stays under 2 KB regardless of rule file size', () => {
+    // Write a 20 KB PROJECT-RULES.md to prove size independence.
+    const bigProjectRules = '# Project Rules\n\n' + 'Line of project policy content.\n'.repeat(800);
+    scaffoldProject(tmpDir, { projectRules: bigProjectRules });
+
+    const result = runHook(['prompt'], { env: { CLAUDE_PROJECT_DIR: tmpDir } });
+
+    assert.equal(result.status, 0, 'exit code should be 0');
+    assert.ok(
+      result.stdout.length < 2048,
+      `stdout should be under 2 KB even with a 20 KB PROJECT-RULES.md (was ${result.stdout.length} bytes)`
+    );
+    // And still contain the directive.
+    assert.match(
+      result.stdout,
+      /\*\*\*CRITICAL\*\*\* GOVERNANCE RULES/,
+      'directive banner should still be present'
     );
   });
 
@@ -147,20 +196,30 @@ describe('agent mode', () => {
     removeTempDir(tmpDir);
   });
 
-  it('outputs AGENT-RULES.md content', () => {
+  it('emits directive pointing at AGENT-RULES.md', () => {
     const result = runHook(['agent'], {
       env: { CLAUDE_PROJECT_DIR: tmpDir },
       input: '{"prompt":"write tests for the module"}',
     });
 
     assert.equal(result.status, 0, 'exit code should be 0');
+    assert.match(
+      result.stdout,
+      /\*\*\*CRITICAL\*\*\* SUBAGENT GOVERNANCE/,
+      'stdout should contain the subagent directive banner'
+    );
     assert.ok(
-      result.stdout.includes('S1. Identity'),
-      'stdout should contain "S1. Identity" from AGENT-RULES.md'
+      result.stdout.includes(path.join(tmpDir, '.claude', 'sdlc', 'rules', 'AGENT-RULES.md')),
+      'stdout should include absolute path to AGENT-RULES.md'
+    );
+    // Content must NOT be inlined.
+    assert.ok(
+      !result.stdout.includes('S1. Identity'),
+      'stdout should NOT inline AGENT-RULES.md content'
     );
   });
 
-  it('detects coordinator keywords', () => {
+  it('includes coordinator reminder on coordinator prompts', () => {
     const result = runHook(['agent'], {
       env: { CLAUDE_PROJECT_DIR: tmpDir },
       input: '{"prompt":"orchestrate the team to implement the feature"}',
@@ -168,16 +227,41 @@ describe('agent mode', () => {
 
     assert.equal(result.status, 0, 'exit code should be 0');
     assert.ok(
-      result.stdout.includes('## Coordination'),
-      'stdout should contain Coordination section for coordinator keywords'
+      result.stdout.includes(path.join(tmpDir, '.claude', 'sdlc', 'rules', 'AGENT-RULES.md')),
+      'stdout should include AGENT-RULES.md directive'
     );
     assert.ok(
-      result.stdout.includes('Delegate all file operations'),
-      'stdout should contain coordinator instructions'
+      result.stdout.includes('Coordination reminder:'),
+      'stdout should include the inline coordinator reminder'
+    );
+    assert.ok(
+      result.stdout.includes('COMPLETE/FAILED'),
+      'stdout should include the return-format hint'
     );
   });
 
-  it('does not include Coordination section for leaf agents', () => {
+  it('adds AGENT-RULES-COORDINATOR.md directive when file exists and prompt is coordinator', () => {
+    scaffoldProject(tmpDir, { coordinatorRules: '# Coordinator Rules\n' });
+
+    const result = runHook(['agent'], {
+      env: { CLAUDE_PROJECT_DIR: tmpDir },
+      input: '{"prompt":"orchestrate the team"}',
+    });
+
+    assert.equal(result.status, 0, 'exit code should be 0');
+    assert.ok(
+      result.stdout.includes(
+        path.join(tmpDir, '.claude', 'sdlc', 'rules', 'AGENT-RULES-COORDINATOR.md')
+      ),
+      'stdout should include absolute path to AGENT-RULES-COORDINATOR.md'
+    );
+    assert.ok(
+      result.stdout.includes('coordinator-only rules'),
+      'stdout should label the coordinator-only rules tier'
+    );
+  });
+
+  it('omits coordinator reminder for leaf agents', () => {
     const result = runHook(['agent'], {
       env: { CLAUDE_PROJECT_DIR: tmpDir },
       input: '{"prompt":"write the tests for the login module"}',
@@ -185,12 +269,12 @@ describe('agent mode', () => {
 
     assert.equal(result.status, 0, 'exit code should be 0');
     assert.ok(
-      result.stdout.includes('S1. Identity'),
-      'stdout should contain agent rules'
+      result.stdout.includes(path.join(tmpDir, '.claude', 'sdlc', 'rules', 'AGENT-RULES.md')),
+      'stdout should include AGENT-RULES.md directive'
     );
     assert.ok(
-      !result.stdout.includes('## Coordination'),
-      'stdout should NOT contain Coordination section for leaf agents'
+      !result.stdout.includes('Coordination reminder:'),
+      'stdout should NOT contain coordinator reminder for leaf agents'
     );
   });
 
@@ -203,11 +287,11 @@ describe('agent mode', () => {
 
     assert.equal(result.status, 0, 'exit code should be 0');
     assert.ok(
-      result.stdout.includes('S1. Identity'),
-      'stdout should still contain agent rules'
+      result.stdout.includes(path.join(tmpDir, '.claude', 'sdlc', 'rules', 'AGENT-RULES.md')),
+      'stdout should still include AGENT-RULES.md directive'
     );
     assert.ok(
-      !result.stdout.includes('## Coordination'),
+      !result.stdout.includes('Coordination reminder:'),
       'should default to leaf agent when stdin is empty'
     );
   });
@@ -268,8 +352,12 @@ describe('findProjectRoot', () => {
 
     assert.equal(result.status, 0, 'exit code should be 0');
     assert.ok(
-      result.stdout.includes('R1. Delegation'),
+      result.stdout.includes('Read this file now:'),
       'should find .claude/ by walking up from nested subdirectory'
+    );
+    assert.ok(
+      result.stdout.includes('RULES.md'),
+      'directive should point at RULES.md'
     );
   });
 });

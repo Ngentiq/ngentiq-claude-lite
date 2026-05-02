@@ -66,7 +66,7 @@ See .claude/agents/ for available specialized agents.
 
 ## Adding PROJECT-RULES.md
 
-Create `.claude/PROJECT-RULES.md` for custom rules that get injected alongside the framework rules on every prompt. This is the extension point for project-specific behavioral constraints.
+Create `.claude/PROJECT-RULES.md` for custom rules that get loaded alongside the framework rules on every prompt. This is the extension point for project-specific behavioral constraints. File size is unbounded -- the hook directs Claude to Read the file directly, so adding hundreds of lines of project policy will not break rule delivery.
 
 ### Example
 
@@ -92,7 +92,9 @@ Create `.claude/PROJECT-RULES.md` for custom rules that get injected alongside t
 
 ### How It Works
 
-The `sdlc-hook.js` hook reads both `RULES.md` (framework rules) and `PROJECT-RULES.md` (your rules) and injects them together. Your rules appear after the framework rules in the system context.
+On every prompt, `sdlc-hook.js` emits a small directive block listing the absolute paths of `RULES.md` (framework rules) and `PROJECT-RULES.md` (your rules) and instructs Claude to Read each file before responding. Claude Code surfaces the directive as a `system-reminder`; Claude then opens the rule files via the Read tool, so the full content of both files is loaded into context fresh on every turn.
+
+The directive itself stays well under 2 KB regardless of how large your `PROJECT-RULES.md` grows. This is by design -- Claude Code truncates hook stdout above ~10 KB, so inlining rule content would silently lose anything past that ceiling. Pointing at file paths sidesteps the limit entirely. Add as much project policy as you need.
 
 ---
 
@@ -303,12 +305,13 @@ Description of what this skill does.
 
 ## Modifying Framework Rules
 
-The framework ships two rule files that get injected on every interaction:
+The framework ships two rule files. The hook does not inline them; on every interaction it emits a directive listing each file's absolute path and instructs Claude to Read it before responding:
 
-| File | Injected On | Purpose |
-|------|-------------|---------|
+| File | Loaded On | Purpose |
+|------|-----------|---------|
 | `.claude/sdlc/rules/RULES.md` | Every prompt | Delegation, concise returns, truthfulness, command discipline |
 | `.claude/sdlc/rules/AGENT-RULES.md` | Every agent spawn | Scope, return format, file operations, quality |
+| `.claude/sdlc/rules/AGENT-RULES-COORDINATOR.md` (optional) | Every coordinator agent spawn | Coordinator-only rules (create this file to add orchestration-specific guidance) |
 
 ### When to Modify
 

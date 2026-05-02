@@ -2,8 +2,14 @@
 // sdlc-hook.js -- Single hook for Claude Code SDLC framework
 //
 // Usage:
-//   node sdlc-hook.js prompt   (UserPromptSubmit: injects RULES.md + PROJECT-RULES.md)
-//   node sdlc-hook.js agent    (SubagentStart: injects AGENT-RULES.md)
+//   node sdlc-hook.js prompt   (UserPromptSubmit: directs Claude to Read RULES.md + PROJECT-RULES.md)
+//   node sdlc-hook.js agent    (SubagentStart: directs Claude to Read AGENT-RULES.md, etc.)
+//
+// Emits a small, size-independent directive block pointing at absolute rule-file
+// paths rather than inlining rule content. Claude Code truncates hook output past
+// ~10 KB via a <persisted-output> envelope; the directive pattern stays under that
+// ceiling regardless of how large the rule files grow. See
+// research/HOOK-TRUNCATION-FIX.md for rationale.
 //
 // Plain JavaScript. No build step. No dependencies beyond Node.js.
 // MIT License
@@ -38,53 +44,56 @@ function findProjectRoot(startDir) {
 }
 
 /**
- * Read a file and return its contents, or empty string if missing/unreadable.
- */
-function safeReadFile(filePath) {
-  try {
-    return fs.readFileSync(filePath, 'utf8');
-  } catch (_) {
-    return '';
-  }
-}
-
-/**
- * prompt mode: inject RULES.md and optionally PROJECT-RULES.md
+ * prompt mode: emit a directive block pointing at RULES.md and (if present)
+ * PROJECT-RULES.md. The model is instructed to Read each file before responding.
  */
 function handlePrompt(projectRoot) {
-  const output = [];
+  const sources = [];
 
   const rulesPath = path.join(projectRoot, '.claude', 'sdlc', 'rules', 'RULES.md');
-  const rulesContent = safeReadFile(rulesPath);
-  if (rulesContent) {
-    output.push(rulesContent);
+  if (fs.existsSync(rulesPath)) {
+    sources.push({ label: 'framework governance rules (non-negotiable)', path: rulesPath });
   }
 
   const projectRulesPath = path.join(projectRoot, '.claude', 'PROJECT-RULES.md');
-  const projectRulesContent = safeReadFile(projectRulesPath);
-  if (projectRulesContent) {
-    output.push('');
-    output.push(projectRulesContent);
+  if (fs.existsSync(projectRulesPath)) {
+    sources.push({ label: 'project governance rules', path: projectRulesPath });
   }
 
-  if (output.length > 0) {
-    process.stdout.write(output.join('\n') + '\n');
+  if (sources.length === 0) return;
+
+  const lines = [];
+  lines.push('════════════════════════════════════════════════════════════════════════');
+  lines.push('  ***CRITICAL*** GOVERNANCE RULES — READ EACH FILE BEFORE RESPONDING');
+  lines.push('════════════════════════════════════════════════════════════════════════');
+  lines.push('');
+  lines.push('The files listed below hold the governance rules this session operates');
+  lines.push('under. You MUST use the Read tool on EVERY file below BEFORE answering');
+  lines.push('the user. Skipping this step means operating without the rules and will');
+  lines.push('cause violations. Hook output is intentionally tiny; rules live in files.');
+  lines.push('');
+  for (const s of sources) {
+    lines.push('  ***CRITICAL*** Read this file now: ' + s.path);
+    lines.push('                (' + s.label + ')');
+    lines.push('');
   }
+  lines.push('════════════════════════════════════════════════════════════════════════');
+
+  process.stdout.write(lines.join('\n') + '\n');
 }
 
 /**
- * agent mode: inject AGENT-RULES.md
- *
- * Reads stdin JSON to detect coordinator keywords in the prompt.
- * If coordinator keywords are found, appends coordinator rules.
+ * agent mode: emit a directive block pointing at AGENT-RULES.md (and optionally
+ * AGENT-RULES-COORDINATOR.md if present and coordinator keywords are detected).
+ * A small inline coordinator reminder is still appended for coordinator spawns --
+ * it is well under the truncation threshold and useful as an immediate prompt.
  */
 function handleAgent(projectRoot) {
-  const output = [];
+  const sources = [];
 
   const agentRulesPath = path.join(projectRoot, '.claude', 'sdlc', 'rules', 'AGENT-RULES.md');
-  const agentRulesContent = safeReadFile(agentRulesPath);
-  if (agentRulesContent) {
-    output.push(agentRulesContent);
+  if (fs.existsSync(agentRulesPath)) {
+    sources.push({ label: 'base subagent rules', path: agentRulesPath });
   }
 
   // Detect coordinator keywords from stdin (SubagentStart provides JSON with prompt field)
@@ -101,20 +110,48 @@ function handleAgent(projectRoot) {
     // No stdin or parse error -- default to leaf agent rules
   }
 
+  // Optional coordinator-only rules file if the team has authored one.
   if (isCoordinator) {
-    output.push('');
-    output.push('## Coordination');
-    output.push('');
-    output.push('You are a coordinator. Delegate all file operations to task agents.');
-    output.push('- Decompose work into independent, parallelizable units.');
-    output.push('- Spawn independent tasks simultaneously.');
-    output.push('- After all agents complete, synthesize results.');
-    output.push('- Your return follows the same format (50-200 tokens, COMPLETE/FAILED).');
+    const coordRulesPath = path.join(
+      projectRoot,
+      '.claude',
+      'sdlc',
+      'rules',
+      'AGENT-RULES-COORDINATOR.md'
+    );
+    if (fs.existsSync(coordRulesPath)) {
+      sources.push({ label: 'coordinator-only rules', path: coordRulesPath });
+    }
   }
 
-  if (output.length > 0) {
-    process.stdout.write(output.join('\n') + '\n');
+  if (sources.length === 0) return;
+
+  const lines = [];
+  lines.push('════════════════════════════════════════════════════════════════════════');
+  lines.push('  ***CRITICAL*** SUBAGENT GOVERNANCE — READ EACH FILE BEFORE RESPONDING');
+  lines.push('════════════════════════════════════════════════════════════════════════');
+  lines.push('');
+  lines.push('You are a subagent. The files below define the rules you operate under.');
+  lines.push('You MUST use the Read tool on EVERY file listed BEFORE starting your');
+  lines.push('task. Hook output is intentionally tiny; the rules live in the files.');
+  lines.push('');
+  for (const s of sources) {
+    lines.push('  ***CRITICAL*** Read this file now: ' + s.path);
+    lines.push('                (' + s.label + ')');
+    lines.push('');
   }
+
+  // Small inline coordinator reminder is still safe here (no truncation risk).
+  if (isCoordinator) {
+    lines.push('Coordination reminder: decompose into independent parallel units, spawn');
+    lines.push('them together, synthesize after all return. Keep your own return 50-200');
+    lines.push('tokens, format COMPLETE/FAILED.');
+    lines.push('');
+  }
+
+  lines.push('════════════════════════════════════════════════════════════════════════');
+
+  process.stdout.write(lines.join('\n') + '\n');
 }
 
 // --- Main ---

@@ -1,6 +1,6 @@
 {
   "name": "@ngentiq/claude-lite",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "description": "Lightweight Claude Code SDLC framework with hooks, rules, and skills",
   "license": "SEE LICENSE IN LICENSE",
   "repository": {
